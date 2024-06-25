@@ -2,6 +2,8 @@ const express = require("express");
 const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const morgan = require("morgan");
+const userRoutes = require("./routes/userRoutes");
 
 dotenv.config();
 
@@ -13,8 +15,11 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
 const port = 3000;
 
-app.listen(port, () => {
+app.listen(process.env.port || port, () => {
   console.log("The server is listening on port " + port);
 });
+app.use(morgan("dev"));
+app.use("/api/v1/user", userRoutes);
