@@ -22,4 +22,21 @@ const SignUp = async (req, res) => {
   }
 };
 
-module.exports = { SignUp };
+const logIn = async function (req, res) {
+  const { userName, email, password } = req.body;
+  if ((!userName && !email) || !password) {
+    return res
+      .status(400)
+      .json({ messsage: "Please provide correct Creditentials" });
+  }
+  const user = await User.findOne({ email });
+
+  if (!user || !(await user.confirmPassword(password, user.password))) {
+    return res
+      .status(400)
+      .json({ message: "Please provide correct email and password" });
+  }
+
+  res.status(200).token;
+};
+module.exports = { SignUp, logIn };

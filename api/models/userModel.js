@@ -59,6 +59,19 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.comparePassword = async function (
+  enteredPassword,
+  userPassword
+) {
+  return await bcryptjs.compare(enteredPassword, userPassword);
+};
+
+//statics method
+//the model can use the methods define on statics
+// userSchema.statics.findUser = function(docs,next){
+
+// }
+
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;
