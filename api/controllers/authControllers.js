@@ -1,14 +1,14 @@
 const User = require("../models/userModel");
+const AppError = require("../utils/AppError");
 
-const SignUp = async (req, res) => {
+const SignUp = async (req, res, next) => {
   const { userName, email, password, confirmPassword } = req.body;
   const transformedEmail = email.toLowerCase();
 
   try {
-    // if(!userName || !)
     const findUser = await User.findOne({ userName, transformedEmail });
     if (findUser) {
-      return res.this.status(400).json({ message: "This user already exist" });
+      return next(new AppError("This user already exist", 400));
     }
     const user = await User.create({
       userName,
@@ -18,25 +18,25 @@ const SignUp = async (req, res) => {
     });
     res.status(201).json({ user: user, message: "User created successfully" });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    next(error);
   }
 };
 
-const logIn = async function (req, res) {
-  const { userName, email, password } = req.body;
-  if ((!userName && !email) || !password) {
-    return res
-      .status(400)
-      .json({ messsage: "Please provide correct Creditentials" });
-  }
-  const user = await User.findOne({ email });
+const logIn = async function (req, res, next) {
+  try {
+    const { userName, email, password } = req.body;
+    if ((!userName && !email) || !password) {
+      return next(new AppError("Please provide username/email and password"));
+    }
+    const user = await User.findOne({ email });
 
-  if (!user || !(await user.confirmPassword(password, user.password))) {
-    return res
-      .status(400)
-      .json({ message: "Please provide correct email and password" });
-  }
+    if (!user || !(await user.confirmPassword(password, user.password))) {
+      return next(new AppError("Please provide coorect Credientials"));
+    }
 
-  res.status(200).token;
+    res.status(200).json({ message: "you are loged in" });
+  } catch (error) {
+    next(error);
+  }
 };
 module.exports = { SignUp, logIn };
