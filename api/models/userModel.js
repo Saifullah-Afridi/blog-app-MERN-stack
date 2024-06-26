@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const bcryptjs = require("bcryptjs");
 
 const passwordValidator = (password) => {
   const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
@@ -11,12 +12,18 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "please provide username "],
       unique: [true, "username must be unique"],
+      trim: true,
     },
     email: {
       type: String,
       required: [true, "please provide email "],
       unique: [true, "email must be unique"],
+      isLowercase: true,
       validate: [validator.isEmail, "please provide a valid email"],
+      set: function (value) {
+        return value.toLowerCase();
+      },
+      trim: true,
     },
     password: {
       type: String,
@@ -29,17 +36,28 @@ const userSchema = new mongoose.Schema(
     },
     confirmPassword: {
       type: String,
-      requied: [true, "please confirm your password"],
+      required: [true, "please confirm your password"],
       validate: {
         validator: function (el) {
           return this.password === el;
         },
-        message: "The passwords should be matched",
+        message: "The passwords must be matched",
       },
     },
   },
   { timestamps: true }
 );
+
+//run only onsave() and on  create()
+// does not work with findbyidandupdate() and insertMany()
+userSchema.pre("save", async function (next) {
+  if (!this.isModified("password")) {
+    return;
+  }
+  this.password = await bcryptjs.hash(this.password, 9);
+  this.confirmPassword = undefined;
+  next();
+});
 
 const User = mongoose.model("User", userSchema);
 
