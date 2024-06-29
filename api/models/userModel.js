@@ -1,9 +1,9 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
-
+const jwt = require("jsonwebtoken");
 const passwordValidator = (password) => {
-  const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
   return regex.test(password);
 };
 const userSchema = new mongoose.Schema(
@@ -28,22 +28,29 @@ const userSchema = new mongoose.Schema(
     password: {
       type: String,
       required: [true, "please provide password"],
-      validate: {
-        validator: passwordValidator,
-        message:
-          "Password must be at least 8 characters long and include at least one uppercase letter, one digit, and one symbol",
-      },
+      // validate: {
+      //   validator: passwordValidator,
+      //   message:
+      //     "Password will be at least 8 character and will have one letter,one sybmol and one digit",
+      // },
     },
     confirmPassword: {
       type: String,
-      required: [true, "please confirm your password"],
-      validate: {
-        validator: function (el) {
-          return this.password === el;
-        },
-        message: "The passwords must be matched",
-      },
+      // validate: {
+      //   validator: function (el) {
+      //     return this.password === el;
+      //   },
+      //   message: "The passwords must be matched",
+      // },
     },
+    tokens: [
+      {
+        token: {
+          type: String,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
@@ -71,6 +78,16 @@ userSchema.methods.comparePassword = async function (
 // userSchema.statics.findUser = function(docs,next){
 
 // }
+userSchema.methods.generateJwtToken = async function () {
+  const token = await jwt.sign(
+    { _id: this._id.toString() },
+    process.env.SECRET
+  );
+
+  this.tokens = this.tokens.concat({ token });
+  await this.save();
+  return token;
+};
 
 const User = mongoose.model("User", userSchema);
 
