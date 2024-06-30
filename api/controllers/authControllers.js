@@ -91,5 +91,6 @@ const protectedRoute = async (req, res, next) => {
 };
 const me = (req, res, next) => {
   res.send(req.user);
+  console.log("user");
 };
 module.exports = { SignUp, logIn, protectedRoute, me };
