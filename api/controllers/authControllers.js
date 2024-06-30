@@ -1,6 +1,9 @@
-const User = require("../models/userModel");
-const AppError = require("../utils/AppError");
+const { promisify } = require("util");
 
+const User = require("../models/userModel");
+
+const AppError = require("../utils/AppError");
+const jwt = require("jsonwebtoken");
 const SignUp = async (req, res, next) => {
   const { userName, email, password, confirmPassword } = req.body;
 
@@ -48,4 +51,45 @@ const logIn = async function (req, res, next) {
     next(error);
   }
 };
-module.exports = { SignUp, logIn };
+
+const protectedRoute = async (req, res, next) => {
+  try {
+    let token;
+    if (
+      req.headers.authorization &&
+      req.headers.authorization.startsWith("Bearer")
+    ) {
+      token = req.headers.authorization.split(" ")[1];
+    }
+    if (!token) {
+      return next(new AppError("Please Log in,", 404));
+    }
+
+    const payload = await promisify(jwt.verify)(token, process.env.SECRET);
+    const today = new Date();
+    console.log(payload);
+    const isExpired = payload.exp * 1000 < today.getTime();
+    if (isExpired) {
+      return next(new AppError("The token is expired.Please Login again", 400));
+    }
+    const user = await User.findOne({
+      _id: payload._id,
+      "tokens.token": token,
+    });
+
+    if (!user) {
+      return next(
+        new AppError("The token belong to the user does not exist", 400)
+      );
+    }
+
+    req.user = user;
+    next();
+  } catch (error) {
+    next(error);
+  }
+};
+const me = (req, res, next) => {
+  res.send(req.user);
+};
+module.exports = { SignUp, logIn, protectedRoute, me };
