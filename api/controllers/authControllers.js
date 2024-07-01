@@ -1,9 +1,8 @@
 const { promisify } = require("util");
-
 const User = require("../models/userModel");
-
 const AppError = require("../utils/AppError");
 const jwt = require("jsonwebtoken");
+
 const SignUp = async (req, res, next) => {
   const { userName, email, password, confirmPassword } = req.body;
 
@@ -67,30 +66,78 @@ const protectedRoute = async (req, res, next) => {
 
     const payload = await promisify(jwt.verify)(token, process.env.SECRET);
     const today = new Date();
-    console.log(payload);
+
     const isExpired = payload.exp * 1000 < today.getTime();
     if (isExpired) {
       return next(new AppError("The token is expired.Please Login again", 400));
     }
+
     const user = await User.findOne({
       _id: payload._id,
       "tokens.token": token,
     });
 
-    if (!user) {
-      return next(
-        new AppError("The token belong to the user does not exist", 400)
-      );
+    if (token) {
+      const tokenInside = await User.findOne({ "tokens.token": token });
+      if (!tokenInside) {
+        res.status(200).json({
+          status: "fail",
+          message: "The token does not exist please log in",
+        });
+      }
     }
 
+    if (!user) {
+      return next(
+        new AppError("The token does not exist please try again later ", 400)
+      );
+    }
+    req.token = token;
     req.user = user;
     next();
   } catch (error) {
     next(error);
   }
 };
+
+const logout = async (req, res, next) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    await req.user.save();
+
+    res.status(200).json({ status: "success", message: "you have Log out" });
+  } catch (error) {
+    next(new AppError("Internal server Error", 500));
+  }
+};
+
+const logOutFromAllDevice = async (req, res, next) => {
+  req.user.tokens = req.user.tokens.filter((token) => {
+    return token.token === req.token;
+  });
+  await req.user.save();
+  res.status(200).json({
+    status: "success",
+    message: "You have been logout from all other devices",
+  });
+};
+
+const protectedRouteexample = (req, res, next) => {
+  res.send("hello from here");
+};
+
 const me = (req, res, next) => {
   res.send(req.user);
-  console.log("user");
 };
-module.exports = { SignUp, logIn, protectedRoute, me };
+
+module.exports = {
+  SignUp,
+  logIn,
+  protectedRoute,
+  logout,
+  me,
+  protectedRouteexample,
+  logOutFromAllDevice,
+};

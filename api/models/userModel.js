@@ -66,6 +66,12 @@ userSchema.pre("save", async function (next) {
   next();
 });
 
+userSchema.methods.toJSON = function () {
+  const user = this.toObject();
+  delete user.password;
+  delete user.tokens;
+  return user;
+};
 userSchema.methods.comparePassword = async function (
   enteredPassword,
   userPassword
