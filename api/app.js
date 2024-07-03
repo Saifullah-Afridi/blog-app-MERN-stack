@@ -7,7 +7,8 @@ const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const AppError = require("./utils/AppError");
 const globalErrorHandler = require("./controllers/globalErrorHandler");
-
+const taskRoutes = require("./routes/taskRoutes");
+const cors = require("cors");
 dotenv.config();
 
 mongoose
@@ -25,6 +26,12 @@ app.listen(process.env.port || port, () => {
   console.log("The server is listening on port " + port);
 });
 
+const corsOption = {
+  origin: "http://localhost:5173", // The URL of your frontend
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+  credentials: true,
+};
 // app.use(function (req, res, next) {
 //   console.log(req.method, req.originalUrl);
 //   // res.send("two");
@@ -41,9 +48,10 @@ app.listen(process.env.port || port, () => {
 // });
 app.use(morgan("dev"));
 app.use(express.json());
+app.use(cors(corsOption));
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/auth", authRoutes);
-
+app.use("/api/v1/task", taskRoutes);
 // middleware for unhandled routes
 app.all("*", (req, res, next) => {
   next(new AppError("Can not find " + req.originalUrl));

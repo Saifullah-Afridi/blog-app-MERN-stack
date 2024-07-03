@@ -5,6 +5,7 @@ const jwt = require("jsonwebtoken");
 
 const SignUp = async (req, res, next) => {
   const { userName, email, password, confirmPassword } = req.body;
+  console.log(req.body);
 
   try {
     if (password !== confirmPassword) {
@@ -17,11 +18,12 @@ const SignUp = async (req, res, next) => {
 
     const user = new User(req.body);
     await user.save();
-    console.log(user);
+
     const token = await user.generateJwtToken();
+    res.setHeader("Cache-Control", "no-store");
     res.status(201).json({ message: "User created successfully", user, token });
   } catch (error) {
-    next(error);
+    next(new AppError(error.message, 400));
   }
 };
 
@@ -45,7 +47,10 @@ const logIn = async function (req, res, next) {
     // and if the validation fails it will give an error
     const token = await user.generateJwtToken(user);
 
-    res.status(200).json({ status: "success", user, token });
+    res
+      .status(200)
+      .cookie("access_token", token)
+      .json({ status: "success", user, token });
   } catch (error) {
     next(error);
   }
