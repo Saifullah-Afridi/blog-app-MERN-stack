@@ -2,6 +2,7 @@ const { promisify } = require("util");
 const User = require("../models/userModel");
 const AppError = require("../utils/AppError");
 const jwt = require("jsonwebtoken");
+const multer = require("multer");
 
 const SignUp = async (req, res, next) => {
   const { userName, email, password, confirmPassword } = req.body;
@@ -137,6 +138,10 @@ const me = (req, res, next) => {
   res.send(req.user);
 };
 
+const uploadAvatar = (req, res, next) => {
+  res.send("");
+};
+
 module.exports = {
   SignUp,
   logIn,
@@ -145,4 +150,5 @@ module.exports = {
   me,
   protectedRouteexample,
   logOutFromAllDevice,
+  uploadAvatar,
 };
