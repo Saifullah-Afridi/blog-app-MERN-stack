@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const bcryptjs = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const Task = require("./taskModel");
 const passwordValidator = (password) => {
   const regex = /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,15}$/;
   return regex.test(password);
@@ -102,6 +103,11 @@ userSchema.virtual("tasks", {
   foreignField: "owner",
 });
 
+//when the remove method is called ,,before that method first this will called ..removing all the tasks of that user
+userSchema.pre("remove", async function (next) {
+  await Task.deleteMany({ owner: this._id });
+  next();
+});
 const User = mongoose.model("User", userSchema);
 
 module.exports = User;

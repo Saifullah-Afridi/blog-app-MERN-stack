@@ -8,6 +8,7 @@ const {
   protectedRouteexample,
   logOutFromAllDevice,
   uploadAvatar,
+  deleteMe,
 } = require("../controllers/authControllers");
 const multer = require("multer");
 const router = express.Router();
@@ -21,4 +22,5 @@ router.route("/log-out/devices").get(protectedRoute, logOutFromAllDevice);
 router.route("/me").get(protectedRoute, me);
 router.route("/check").get(protectedRoute, protectedRouteexample);
 router.route("/avatar").post(avatar.single("profile"), uploadAvatar);
+router.route("/delete-me").delete(protectedRoute, deleteMe);
 module.exports = router;

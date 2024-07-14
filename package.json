@@ -5,11 +5,13 @@
   "main": "app.js",
   "scripts": {
     "dev": "nodemon api/app.js",
-    "start": "node api/app.js"
+    "start": "node api/app.js",
+    "test": "jest"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@sendgrid/mail": "^8.1.3",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.5",

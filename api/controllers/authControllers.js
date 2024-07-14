@@ -32,16 +32,19 @@ const logIn = async function (req, res, next) {
   try {
     const { userName, email, password } = req.body;
     if ((!userName && !email) || !password) {
-      return next(new AppError("Please provide username/email and password"));
+      return next(
+        new AppError("Please provide username/email and password", 400)
+      );
     }
     let user;
     if (email) {
       user = await User.findOne({ email });
-    } else if (userName) {
+    }
+    if (userName) {
       user = await User.findOne({ userName });
     }
     if (!user || !(await user.comparePassword(password, user.password))) {
-      return next(new AppError("Please provide coorect Credientials"));
+      return next(new AppError("Please provide coorect Credientials", 400));
     }
 
     // this save function of mongoose will run the validator again if you use it
@@ -67,7 +70,7 @@ const protectedRoute = async (req, res, next) => {
       token = req.headers.authorization.split(" ")[1];
     }
     if (!token) {
-      return next(new AppError("Please Log in,", 404));
+      return next(new AppError("Please Log in,", 401));
     }
 
     const payload = await promisify(jwt.verify)(token, process.env.SECRET);
@@ -75,7 +78,7 @@ const protectedRoute = async (req, res, next) => {
 
     const isExpired = payload.exp * 1000 < today.getTime();
     if (isExpired) {
-      return next(new AppError("The token is expired.Please Login again", 400));
+      return next(new AppError("The token is expired.Please Login again", 401));
     }
 
     const user = await User.findOne({
@@ -142,6 +145,11 @@ const uploadAvatar = (req, res, next) => {
   res.send("");
 };
 
+const deleteMe = async (req, res, next) => {
+  await req.user.remove();
+};
+
+const updateUser = async (req, res, next) => {};
 module.exports = {
   SignUp,
   logIn,
@@ -151,4 +159,5 @@ module.exports = {
   protectedRouteexample,
   logOutFromAllDevice,
   uploadAvatar,
+  deleteMe,
 };
