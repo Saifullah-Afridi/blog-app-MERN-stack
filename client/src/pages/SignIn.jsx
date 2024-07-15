@@ -1,39 +1,41 @@
-import { Button, ButtonGroup, Label, TextInput } from "flowbite-react";
-import React, { useState } from "react";
+import { Button, ButtonGroup, Label, TextInput, Alert } from "flowbite-react";
+import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-
+import { useDispatch, useSelector } from "react-redux";
+import { userLogin } from "../store/slices/userSlices";
+import { toast } from "react-toastify";
 const SignIn = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
-  const [successMessage, setSuccessMessage] = useState("");
-  const [errorMessage, setErrorMessaage] = useState("");
   const navigate = useNavigate();
+  const isAuthenticated = useSelector((state) => state.user.isAuthenticated);
+  const errorMessage = useSelector((state) => state.user.error);
+  const user = useSelector((state) => state.user.user);
+  const loading = useSelector((state) => state.user.loading);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (user && isAuthenticated) {
+      toast.success("Login Successfull");
+      console.log("hello");
+      navigate("/");
+    }
+  }, [user, isAuthenticated]);
   const handleSubmit = async (e) => {
     e.preventDefault();
     const user = {
       userName,
       password,
     };
-
-    axios
-      .post("http://localhost:3000/api/v1/auth/log-in", user, {
-        withCredentials: true,
-        credentials: true,
-      })
-      .then((res) => {
-        setSuccessMessage(res.data.message);
-        setUserName("");
-        setPassword("");
-        navigate("/");
-      })
-      .catch((error) => {
-        setErrorMessaage(error.response.data.message);
-        console.log(errorMessage);
-      });
+    dispatch(userLogin(user));
   };
   return (
     <div className="mt-[2rem] px-4 min-h-screen">
+      <Alert color="info" className="mb-5">
+        <span className="font-medium">Info alert!</span> Change a few things up
+        and try submitting again.
+      </Alert>
       <div className="flex md:flex-row  flex-col gap-3">
         <div className="flex-1 md:self-center">
           <Link to="/" className="text-4xl font-semibold">
