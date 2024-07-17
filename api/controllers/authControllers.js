@@ -150,6 +150,18 @@ const deleteMe = async (req, res, next) => {
 };
 
 const updateUser = async (req, res, next) => {};
+
+const googleAuth = async (req, res, next) => {
+  const { name, email, googlePhotoUrl } = req.body;
+  try {
+    const user = await User.findOne({ email });
+    if (user) {
+      const token = user.generateJwtToken();
+    }
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
 module.exports = {
   SignUp,
   logIn,
@@ -160,4 +172,5 @@ module.exports = {
   logOutFromAllDevice,
   uploadAvatar,
   deleteMe,
+  googleAuth,
 };
