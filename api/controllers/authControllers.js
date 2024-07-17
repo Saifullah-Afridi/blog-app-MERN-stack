@@ -156,7 +156,23 @@ const googleAuth = async (req, res, next) => {
   try {
     const user = await User.findOne({ email });
     if (user) {
-      const token = user.generateJwtToken();
+      const token = await user.generateJwtToken();
+      res.status(200).json({ status: "success", user, token });
+    } else {
+      const generatePassword = name + email;
+      const newUser = await User.create({
+        name: name.Math.random(),
+        email: email,
+        password: generatePassword,
+        confirmPassword: generatePassword,
+        profilePicture: googlePhotoUrl,
+      });
+      const token = await newUser.generateJwtToken();
+      res.josn(200).json({
+        status: "success",
+        user: newUser,
+        token,
+      });
     }
   } catch (error) {
     next(new AppError(error.message, 500));

@@ -14,8 +14,28 @@ export const userLogin = createAsyncThunk(
         }
       );
 
-      console.log(response.data.user);
       return response.data.user;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
+export const createGoogleUser = createAsyncThunk(
+  "createGoogleUser",
+  async (userData, thunkApi) => {
+    try {
+      console.log("1st");
+      const res = axios.post(
+        "http://localhost:3000/api/v1/auth/google",
+        userData,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      console.log("2nd");
+      return res.data.user;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data.message);
     }

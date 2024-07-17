@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema(
       required: [true, "please provide username "],
       unique: [true, "username must be unique"],
       trim: true,
+      set: function (value) {
+        return value.toLowerCase();
+      },
     },
     email: {
       type: String,
@@ -25,6 +28,11 @@ const userSchema = new mongoose.Schema(
         return value.toLowerCase();
       },
       trim: true,
+    },
+    profilePicture: {
+      type: String,
+      default:
+        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRAd5avdba8EiOZH8lmV3XshrXx7dKRZvhx-A&s",
     },
     password: {
       type: String,
@@ -53,6 +61,7 @@ const userSchema = new mongoose.Schema(
       },
     ],
   },
+
   { timestamps: true }
 );
 

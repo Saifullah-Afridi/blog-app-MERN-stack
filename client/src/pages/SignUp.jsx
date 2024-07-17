@@ -2,6 +2,7 @@ import { Button, ButtonGroup, Label, TextInput } from "flowbite-react";
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
+import OAuth from "../components/OAuth";
 
 const SignUp = () => {
   const [userName, setUserName] = useState("");
@@ -103,6 +104,7 @@ const SignUp = () => {
               />
             </div>
             <Button type="submit">Sign up</Button>
+            <OAuth />
             <div className="flex gap-3">
               <p>Have an account?</p>
               <Link to="/sign-in" className=" text-blue-500">

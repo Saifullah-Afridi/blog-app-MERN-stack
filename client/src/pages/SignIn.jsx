@@ -5,6 +5,7 @@ import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
 import { userLogin } from "../store/slices/userSlices";
 import { toast } from "react-toastify";
+import OAuth from "../components/OAuth";
 const SignIn = () => {
   const [userName, setUserName] = useState("");
   const [password, setPassword] = useState("");
@@ -77,6 +78,7 @@ const SignIn = () => {
               />
             </div>
             <Button type="submit">Sign in</Button>
+            <OAuth />
             <div className="flex gap-3">
               <p>Does not have an account?</p>
               <Link to="/sign-up" className=" text-blue-500">
