@@ -157,6 +157,7 @@ const googleAuth = async (req, res, next) => {
     const user = await User.findOne({ email });
     if (user) {
       const token = await user.generateJwtToken();
+      console.log(user);
       res.status(200).json({ status: "success", user, token });
     } else {
       const generatePassword = name + email;
@@ -167,6 +168,7 @@ const googleAuth = async (req, res, next) => {
         confirmPassword: generatePassword,
         profilePicture: googlePhotoUrl,
       });
+      console.log(newUser);
       const token = await newUser.generateJwtToken();
       res.josn(200).json({
         status: "success",

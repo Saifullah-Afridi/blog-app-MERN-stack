@@ -41,6 +41,7 @@ export const createGoogleUser = createAsyncThunk(
     }
   }
 );
+export const logoutUser = createAsyncThunk("logoutUser");
 export const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -74,5 +75,3 @@ export const userSlice = createSlice({
 });
 
 export default userSlice.reducer;
-
-const {} = userSlice.actions;

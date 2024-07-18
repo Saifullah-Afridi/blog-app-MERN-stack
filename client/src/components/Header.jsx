@@ -1,12 +1,22 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { Button, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
-import { FaMoon } from "react-icons/fa";
+import { FaMoon, FaSun } from "react-icons/fa";
+import { useDispatch, useSelector } from "react-redux";
+import HeaderMenu from "./HeaderMenu";
+import { toggleTheme } from "../store/slices/themeSlice";
 
 const Header = () => {
+  const { user, isAuthenticated } = useSelector((state) => state.user);
   const location = useLocation();
   const { pathname } = location;
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const { theme } = useSelector((state) => state.theme);
+  const handleTheme = () => {
+    dispatch(toggleTheme());
+  };
   return (
     <Navbar className="border-b-2 text-sm sm:text-xl">
       <Link to="/" className="self-center    whitespace-nowrap font-semibold ">
@@ -28,16 +38,22 @@ const Header = () => {
       </Button>
       <div className="flex gap-2 md:order-2">
         <Button
+          onClick={handleTheme}
           color="gray"
           className="rounded-full hidden sm:inline w-12 h-10"
         >
-          <FaMoon />
+          {theme === "light" ? <FaMoon /> : <FaSun />}
         </Button>
-        <Link to="/sign-in">
-          <Button gradientDuoTone="purpleToBlue" outline>
-            Sign in
-          </Button>
-        </Link>
+        {isAuthenticated ? (
+          <HeaderMenu user={user} />
+        ) : (
+          <Link to="/sign-in">
+            <Button gradientDuoTone="purpleToBlue" outline>
+              Sign in
+            </Button>
+          </Link>
+        )}
+
         <Navbar.Toggle />
       </div>
       <Navbar.Collapse>

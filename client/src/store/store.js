@@ -4,11 +4,13 @@ import {
   miniSerializeError,
 } from "@reduxjs/toolkit";
 import userReducer from "./slices/userSlices";
+import themeReducer from "./slices/themeSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import persistStore from "redux-persist/es/persistStore";
 const rootReducers = combineReducers({
   user: userReducer,
+  theme: themeReducer,
 });
 const persistConfig = {
   key: "root",

@@ -7,10 +7,13 @@ import store, { persistor } from "./store/store";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { PersistGate } from "redux-persist/integration/react";
+import ThemeProvider from "./components/ThemeProvider.jsx";
 ReactDOM.createRoot(document.getElementById("root")).render(
   <PersistGate persistor={persistor}>
     <Provider store={store}>
-      <App />
+      <ThemeProvider>
+        <App />
+      </ThemeProvider>
       <ToastContainer
         position="top-center"
         autoClose={5000}
