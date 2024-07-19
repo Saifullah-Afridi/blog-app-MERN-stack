@@ -6,15 +6,37 @@ import SignIn from "./pages/SignIn";
 import SignUp from "./pages/SignUp";
 import Projects from "./pages/Projects";
 import Header from "./components/Header";
+import PrivateRoute from "./components/PrivateRoute";
 
 const App = () => {
   return (
     <BrowserRouter>
       <Header></Header>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/about" element={<About />} />
-        <Route path="/dashboard" element={<Dashboard />} />
+        <Route
+          path="/"
+          element={
+            <PrivateRoute>
+              <Home />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/about"
+          element={
+            <PrivateRoute>
+              <About />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <PrivateRoute>
+              <Dashboard />
+            </PrivateRoute>
+          }
+        />
         <Route path="/sign-in" element={<SignIn />} />
         <Route path="/sign-up" element={<SignUp />} />
         <Route path="/projects" element={<Projects />} />
