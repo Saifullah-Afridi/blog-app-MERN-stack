@@ -13,13 +13,14 @@ const Dashboard = () => {
     setTab(newTab);
   }, [location.search]);
   return (
-    <div className="min-h-screen flex flex-col md:flex-row">
+    <div className="min-h-screen flex flex-col md:flex-row gap-3">
       <div className="md:w-56">
         <SideBar />
       </div>
-
-      {tab === "profile" ? <Profile /> : null}
-      {tab === "hello" ? <h1>Hello</h1> : null}
+      <div className="w-full md:w-5/6 p-4">
+        {tab === "profile" ? <Profile /> : null}
+        {tab === "hello" ? <h1>Hello</h1> : null}
+      </div>
     </div>
   );
 };
