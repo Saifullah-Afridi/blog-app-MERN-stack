@@ -13,6 +13,8 @@ const Profile = () => {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [showError, setShowError] = useState("");
+  const [showsucessMessage, setShowSuccessMessage] = useState("");
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const updateFields = {};
@@ -32,19 +34,22 @@ const Profile = () => {
       setShowError("password does not match");
       return;
     }
+
+    if (Object.keys(updateFields).length === 0) {
+      return;
+    }
     setShowError("");
-    console.log("sdf", updateFields);
     dispatch(updateUser({ userId: user._id, updateFields }));
-    // console.log(user._id);
+    setShowSuccessMessage("User has been Updated Successfully");
   };
   return (
     <div className="mt-3 w-[90%] mx-auto ">
       <h1 className="text-3xl text-center">Profile</h1>
-      {/* <img
-          src={user.profilePicture}
-          alt="User Profile picture"
-          className="w-[6rem] h-[6rem] rounded-full border-4 border-gray-400 overflow-hidden self-center p-1 shadow-md mx-auto my-3"
-        /> */}
+      <img
+        src={user.profilePicture}
+        alt="User Profile picture"
+        className="w-[6rem] h-[6rem] rounded-full border-4 border-gray-400 overflow-hidden self-center p-1 shadow-md mx-auto my-3"
+      />
       <form className="flex flex-col gap-3 mt-4" onSubmit={handleSubmit}>
         <TextInput
           type="text"
@@ -84,6 +89,11 @@ const Profile = () => {
           className="font-medium mt-4"
         >
           {error}
+        </Alert>
+      )}
+      {showsucessMessage && (
+        <Alert color="success" className="font-medium mt-4">
+          {showsucessMessage}
         </Alert>
       )}
 

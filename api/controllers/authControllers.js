@@ -142,8 +142,6 @@ const deleteMe = async (req, res, next) => {
 };
 
 const updateMe = async (req, res, next) => {
-  console.log(req.body);
-
   try {
     if (req.user.id !== req.params.id) {
       return next(new AppError("You are not allowed to update this user", 400));

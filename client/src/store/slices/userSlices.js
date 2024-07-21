@@ -32,10 +32,8 @@ export const updateUser = createAsyncThunk(
           credentials: true,
         }
       );
-      console.log(res.data.user);
       return res.data.user;
     } catch (error) {
-      console.log(error.response.data.message);
       return thunkApi.rejectWithValue(error.response.data.message);
     }
   }
