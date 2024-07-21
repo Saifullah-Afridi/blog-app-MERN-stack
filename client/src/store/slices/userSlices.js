@@ -22,7 +22,7 @@ export const userLogin = createAsyncThunk(
 );
 export const updateUser = createAsyncThunk(
   "updateUser",
-  async ({ userId, updateFields }, thunkApi) => {
+  async (userId, thunkApi) => {
     try {
       const res = await axios.patch(
         `http://localhost:3000/api/v1/auth/update-me/${userId}`,
@@ -52,6 +52,25 @@ export const createGoogleUser = createAsyncThunk(
       );
       return res.data.user;
     } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+export const deleteUser = createAsyncThunk(
+  "deleteUser",
+  async (userId, thunkApi) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:3000/api/v1/auth/delete-user/${userId}`,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      console.log(res);
+      return res.data.message;
+    } catch (error) {
+      console.log(error.response.data.message);
       return thunkApi.rejectWithValue(error.response.data.message);
     }
   }
@@ -97,6 +116,15 @@ export const userSlice = createSlice({
       state.isAuthenticated = true;
     });
     builder.addCase(updateUser.rejected, (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    });
+    builder.addCase(deleteUser.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+    });
+    builder.addCase(deleteUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
     });

@@ -3,6 +3,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { updateUser } from "../store/slices/userSlices";
 import { HiInformationCircle } from "react-icons/hi";
 import { useState } from "react";
+import DeleteAccount from "./DeleteAccount";
 const Profile = () => {
   const dispatch = useDispatch();
   const { user, error } = useSelector((state) => {
@@ -64,10 +65,12 @@ const Profile = () => {
         <TextInput
           type="password"
           value={password}
+          placeholder="Password"
           onChange={(e) => setPassword(e.target.value)}
         />
         <TextInput
           type="password"
+          placeholder="confirm Password"
           value={confirmPassword}
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
@@ -98,7 +101,7 @@ const Profile = () => {
       )}
 
       <div className="text-red-500 flex justify-between mt-3">
-        <span className="cursor-pointer">Delete Account</span>
+        <DeleteAccount />
         <span className="cursor-pointer">Sign Out</span>
       </div>
     </div>

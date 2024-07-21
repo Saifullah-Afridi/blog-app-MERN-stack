@@ -85,7 +85,7 @@ const protectedRoute = async (req, res, next) => {
     if (token) {
       const tokenInside = await User.findOne({ "tokens.token": token });
       if (!tokenInside) {
-        res.status(200).json({
+        return res.status(200).json({
           status: "fail",
           message: "The token does not exist please log in",
         });
@@ -137,8 +137,18 @@ const uploadAvatar = (req, res, next) => {
   res.send("");
 };
 
-const deleteMe = async (req, res, next) => {
-  await req.user.remove();
+const deleteUser = async (req, res, next) => {
+  if (req.user.id !== req.params.id) {
+    return next(new AppError("You are not allowed to delete this user", 400));
+  }
+  try {
+    await User.deleteOne({ _id: req.user._id });
+    res
+      .status(200)
+      .json({ status: "success", message: "User has been deleted" });
+  } catch (error) {
+    console.log(error.message);
+  }
 };
 
 const updateMe = async (req, res, next) => {
@@ -213,7 +223,7 @@ module.exports = {
 
   logOutFromAllDevice,
   uploadAvatar,
-  deleteMe,
+  deleteUser,
   googleAuth,
   updateMe,
 };

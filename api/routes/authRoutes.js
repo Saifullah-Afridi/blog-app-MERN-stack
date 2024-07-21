@@ -11,6 +11,7 @@ const {
   deleteMe,
   googleAuth,
   updateMe,
+  deleteUser,
 } = require("../controllers/authControllers");
 const multer = require("multer");
 const router = express.Router();
@@ -24,7 +25,7 @@ router.route("/log-out/devices").get(protectedRoute, logOutFromAllDevice);
 router.route("/me").get(protectedRoute, me);
 ``;
 router.route("/avatar").post(avatar.single("profile"), uploadAvatar);
-router.route("/delete-me").delete(protectedRoute, deleteMe);
 router.post("/google", googleAuth);
 router.patch("/update-me/:id", protectedRoute, updateMe);
+router.route("/delete-user/:id").delete(protectedRoute, deleteUser);
 module.exports = router;
