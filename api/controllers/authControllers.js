@@ -63,16 +63,12 @@ const logIn = async function (req, res, next) {
 const protectedRoute = async (req, res, next) => {
   try {
     let token;
-    if (
-      req.headers.authorization &&
-      req.headers.authorization.startsWith("Bearer")
-    ) {
-      token = req.headers.authorization.split(" ")[1];
+    if (req.cookies.access_token) {
+      token = req.cookies.access_token;
     }
     if (!token) {
       return next(new AppError("Please Log in,", 401));
     }
-
     const payload = await promisify(jwt.verify)(token, process.env.SECRET);
     const today = new Date();
 
@@ -133,10 +129,6 @@ const logOutFromAllDevice = async (req, res, next) => {
   });
 };
 
-const protectedRouteexample = (req, res, next) => {
-  res.send("hello from here");
-};
-
 const me = (req, res, next) => {
   res.send(req.user);
 };
@@ -149,8 +141,41 @@ const deleteMe = async (req, res, next) => {
   await req.user.remove();
 };
 
-const updateUser = async (req, res, next) => {};
+const updateMe = async (req, res, next) => {
+  try {
+    if (req.user.id !== req.params.id) {
+      return next(new AppError("You are not allowed to update this user", 400));
+    }
+    const userId = req.user.id;
+    let user = await User.findById(userId);
+    if (req.body.userName) {
+      user.userName = req.body.userName;
+    }
+    if (req.body.email) {
+      user.email = req.body.email;
+    }
+    if (req.body.password) {
+      if (!req.body.confirmPassword) {
+        return next(new AppError("Please confirm Password", 400));
+      }
+    }
+    if (req.body.password !== req.body.confirmPassword) {
+      return next(new AppError("Passwords do not match", 400));
+    }
+    user.password = req.body.password;
+    user.confirmPassword = req.body.confirmPassword;
 
+    await user.validate();
+    user = await user.save();
+    res.status(200).json({
+      status: "success",
+      message: "user Updated successfully",
+      user: user,
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
 const googleAuth = async (req, res, next) => {
   const { name, email, googlePhotoUrl } = req.body;
   try {
@@ -186,9 +211,10 @@ module.exports = {
   protectedRoute,
   logout,
   me,
-  protectedRouteexample,
+
   logOutFromAllDevice,
   uploadAvatar,
   deleteMe,
   googleAuth,
+  updateMe,
 };

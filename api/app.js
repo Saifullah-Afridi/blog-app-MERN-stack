@@ -9,6 +9,7 @@ const AppError = require("./utils/AppError");
 const globalErrorHandler = require("./controllers/globalErrorHandler");
 const taskRoutes = require("./routes/taskRoutes");
 const cors = require("cors");
+const cookieParser = require("cookie-parser");
 dotenv.config();
 
 mongoose
@@ -49,6 +50,7 @@ const corsOption = {
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(cors(corsOption));
+app.use(cookieParser());
 app.use("/api/v1/user", userRoutes);
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/task", taskRoutes);

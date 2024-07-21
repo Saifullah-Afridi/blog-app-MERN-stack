@@ -5,11 +5,12 @@ const {
   logout,
   protectedRoute,
   me,
-  protectedRouteexample,
+
   logOutFromAllDevice,
   uploadAvatar,
   deleteMe,
   googleAuth,
+  updateMe,
 } = require("../controllers/authControllers");
 const multer = require("multer");
 const router = express.Router();
@@ -21,8 +22,9 @@ router.route("/log-in").post(logIn);
 router.route("/log-out").get(protectedRoute, logout);
 router.route("/log-out/devices").get(protectedRoute, logOutFromAllDevice);
 router.route("/me").get(protectedRoute, me);
-router.route("/check").get(protectedRoute, protectedRouteexample);
+``;
 router.route("/avatar").post(avatar.single("profile"), uploadAvatar);
 router.route("/delete-me").delete(protectedRoute, deleteMe);
 router.post("/google", googleAuth);
+router.patch("/update-me/:id", protectedRoute, updateMe);
 module.exports = router;

@@ -11,6 +11,7 @@ const userSchema = new mongoose.Schema(
   {
     userName: {
       type: String,
+      minlength: [2, "Useranem must be at least 3 characters"],
       required: [true, "please provide username "],
       unique: [true, "username must be unique"],
       trim: true,
@@ -22,7 +23,7 @@ const userSchema = new mongoose.Schema(
       type: String,
       required: [true, "please provide email "],
       unique: [true, "email must be unique"],
-      isLowercase: true,
+      trim: true,
       validate: [validator.isEmail, "please provide a valid email"],
       set: function (value) {
         return value.toLowerCase();
@@ -36,21 +37,18 @@ const userSchema = new mongoose.Schema(
     },
     password: {
       type: String,
+      trim: true,
       required: [true, "please provide password"],
-      // validate: {
-      //   validator: passwordValidator,
-      //   message:
-      //     "Password will be at least 8 character and will have one letter,one sybmol and one digit",
-      // },
     },
     confirmPassword: {
       type: String,
-      // validate: {
-      //   validator: function (el) {
-      //     return this.password === el;
-      //   },
-      //   message: "The passwords must be matched",
-      // },
+      // required: true,
+      validate: {
+        validator: function (el) {
+          return this.password === el;
+        },
+        message: "The passwords must be matched",
+      },
     },
     tokens: [
       {
