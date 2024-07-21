@@ -1,6 +1,5 @@
-import React, { useEffect } from "react";
 import { Button, Navbar, TextInput } from "flowbite-react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { AiOutlineSearch } from "react-icons/ai";
 import { FaMoon, FaSun } from "react-icons/fa";
 import { useDispatch, useSelector } from "react-redux";
@@ -11,7 +10,6 @@ const Header = () => {
   const { user, isAuthenticated } = useSelector((state) => state.user);
   const location = useLocation();
   const { pathname } = location;
-  const navigate = useNavigate();
   const dispatch = useDispatch();
   const { theme } = useSelector((state) => state.theme);
   const handleTheme = () => {
@@ -21,7 +19,7 @@ const Header = () => {
     <Navbar className="border-b-2 text-sm sm:text-xl">
       <Link to="/" className="self-center    whitespace-nowrap font-semibold ">
         <span className="bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500 rounded-lg py-1 px-2">
-          Saifullah's
+          Saifullah
         </span>
         Blog
       </Link>

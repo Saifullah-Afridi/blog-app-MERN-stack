@@ -142,6 +142,8 @@ const deleteMe = async (req, res, next) => {
 };
 
 const updateMe = async (req, res, next) => {
+  console.log(req.body);
+
   try {
     if (req.user.id !== req.params.id) {
       return next(new AppError("You are not allowed to update this user", 400));
@@ -157,13 +159,12 @@ const updateMe = async (req, res, next) => {
     if (req.body.password) {
       if (!req.body.confirmPassword) {
         return next(new AppError("Please confirm Password", 400));
+      } else if (req.body.password !== req.body.confirmPassword) {
+        return next(new AppError("Passwords do not match", 400));
       }
+      user.password = req.body.password;
+      user.confirmPassword = req.body.confirmPassword;
     }
-    if (req.body.password !== req.body.confirmPassword) {
-      return next(new AppError("Passwords do not match", 400));
-    }
-    user.password = req.body.password;
-    user.confirmPassword = req.body.confirmPassword;
 
     await user.validate();
     user = await user.save();

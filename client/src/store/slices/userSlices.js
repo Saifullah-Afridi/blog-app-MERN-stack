@@ -20,12 +20,30 @@ export const userLogin = createAsyncThunk(
     }
   }
 );
-
+export const updateUser = createAsyncThunk(
+  "updateUser",
+  async ({ userId, updateFields }, thunkApi) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:3000/api/v1/auth/update-me/${userId}`,
+        updateFields,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      console.log(res.data.user);
+      return res.data.user;
+    } catch (error) {
+      console.log(error.response.data.message);
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 export const createGoogleUser = createAsyncThunk(
   "createGoogleUser",
   async (userData, thunkApi) => {
     try {
-      console.log("1st");
       const res = axios.post(
         "http://localhost:3000/api/v1/auth/google",
         userData,
@@ -34,7 +52,6 @@ export const createGoogleUser = createAsyncThunk(
           credentials: true,
         }
       );
-      console.log("2nd");
       return res.data.user;
     } catch (error) {
       return thunkApi.rejectWithValue(error.response.data.message);
@@ -52,7 +69,7 @@ export const userSlice = createSlice({
   },
   reducers: {},
   extraReducers: (builder) => {
-    builder.addCase(userLogin.pending, (state, action) => {
+    builder.addCase(userLogin.pending, (state) => {
       state.loading = true;
       state.error = null;
       state.user = null;
@@ -69,6 +86,20 @@ export const userSlice = createSlice({
       state.loading = null;
       state.user = null;
       state.isAuthenticated = false;
+      state.error = action.payload;
+    });
+    builder.addCase(updateUser.pending, (state) => {
+      state.loading = true;
+      state.error = null;
+    });
+    builder.addCase(updateUser.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = action.payload;
+      state.error = null;
+      state.isAuthenticated = true;
+    });
+    builder.addCase(updateUser.rejected, (state, action) => {
+      state.loading = false;
       state.error = action.payload;
     });
   },
