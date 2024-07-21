@@ -4,6 +4,7 @@ import { updateUser } from "../store/slices/userSlices";
 import { HiInformationCircle } from "react-icons/hi";
 import { useState } from "react";
 import DeleteAccount from "./DeleteAccount";
+import Signout from "./Signout";
 const Profile = () => {
   const dispatch = useDispatch();
   const { user, error } = useSelector((state) => {
@@ -102,7 +103,7 @@ const Profile = () => {
 
       <div className="text-red-500 flex justify-between mt-3">
         <DeleteAccount />
-        <span className="cursor-pointer">Sign Out</span>
+        <Signout />
       </div>
     </div>
   );

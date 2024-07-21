@@ -75,7 +75,17 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
-export const logoutUser = createAsyncThunk("logoutUser");
+export const logout = createAsyncThunk("logout", async (data, thunkApi) => {
+  try {
+    const res = await axios.get("http://localhost:3000/api/v1/auth/log-out", {
+      withCredentials: true,
+      credentials: true,
+    });
+    return res.data.user;
+  } catch (error) {
+    return thunkApi.rejectWithValue(error.response.data.message);
+  }
+});
 export const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -127,6 +137,12 @@ export const userSlice = createSlice({
     builder.addCase(deleteUser.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload;
+    });
+    builder.addCase(logout.fulfilled, (state, action) => {
+      state.loading = false;
+      state.user = null;
+      state.isAuthenticated = false;
+      state.error = null;
     });
   },
 });

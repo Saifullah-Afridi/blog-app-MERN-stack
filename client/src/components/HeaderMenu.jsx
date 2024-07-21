@@ -1,5 +1,6 @@
 import { Avatar, Dropdown } from "flowbite-react";
 import { Link } from "react-router-dom";
+import Signout from "./Signout";
 const HeaderMenu = ({ user }) => {
   return (
     <Dropdown
@@ -22,7 +23,9 @@ const HeaderMenu = ({ user }) => {
         <Dropdown.Item>Profile</Dropdown.Item>
       </Link>
       <Dropdown.Divider />
-      <Dropdown.Item>Sign Out</Dropdown.Item>
+      <Dropdown.Item>
+        <Signout />
+      </Dropdown.Item>
     </Dropdown>
   );
 };

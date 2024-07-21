@@ -2,6 +2,7 @@ import { Sidebar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
 import { HiUser, HiArrowNarrowRight } from "react-icons/hi";
 import React, { useEffect, useState } from "react";
+import Signout from "./Signout";
 const SideBar = () => {
   const location = useLocation();
   const [tab, setTab] = useState(null);
@@ -27,7 +28,7 @@ const SideBar = () => {
           </Link>
 
           <Sidebar.Item icon={HiArrowNarrowRight} className="cursor-pointer">
-            SignOut
+            <Signout />
           </Sidebar.Item>
         </Sidebar.ItemGroup>
       </Sidebar.Items>

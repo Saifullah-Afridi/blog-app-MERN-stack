@@ -107,12 +107,16 @@ const protectedRoute = async (req, res, next) => {
 
 const logout = async (req, res, next) => {
   try {
-    req.user.tokens = req.user.tokens.filter((token) => {
-      return token.token !== req.token;
+    res.clearCookie("access_token").status(200).json({
+      status: "success",
+      message: "User has been sign out",
     });
-    await req.user.save();
+    // req.user.tokens = req.user.tokens.filter((token) => {
+    //   return token.token !== req.token;
+    // });
+    // await req.user.save();
 
-    res.status(200).json({ status: "success", message: "you have Log out" });
+    // res.status(200).json({ status: "success", message: "you have Log out" });
   } catch (error) {
     next(new AppError("Internal server Error", 500));
   }
