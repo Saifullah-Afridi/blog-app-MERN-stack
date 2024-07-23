@@ -218,6 +218,18 @@ const googleAuth = async (req, res, next) => {
     next(new AppError(error.message, 500));
   }
 };
+const isAdmin = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (user && user.role === "admin") {
+      next();
+    } else {
+      return next(new AppError("you are not allowed to perform this action"));
+    }
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
 module.exports = {
   SignUp,
   logIn,

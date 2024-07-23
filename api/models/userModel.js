@@ -49,6 +49,10 @@ const userSchema = new mongoose.Schema(
         message: "The passwords must be matched",
       },
     },
+    role: {
+      type: String,
+      default: "user",
+    },
     tokens: [
       {
         token: {
