@@ -5,6 +5,7 @@ import { HiInformationCircle } from "react-icons/hi";
 import { useState } from "react";
 import DeleteAccount from "./DeleteAccount";
 import Signout from "./Signout";
+import { Link } from "react-router-dom";
 const Profile = () => {
   const dispatch = useDispatch();
   const { user, error } = useSelector((state) => {
@@ -76,6 +77,18 @@ const Profile = () => {
           onChange={(e) => setConfirmPassword(e.target.value)}
         />
         <Button type="submit">Update</Button>
+        {user.role === "admin" ? (
+          <Link to="/create-post">
+            <Button
+              className="w-full"
+              type="button"
+              gradientDuoTone="purpleToBlue"
+              outline
+            >
+              Create Post
+            </Button>
+          </Link>
+        ) : null}
       </form>
       {showError && (
         <Alert
