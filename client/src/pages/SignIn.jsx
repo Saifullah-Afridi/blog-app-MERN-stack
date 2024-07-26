@@ -19,7 +19,6 @@ const SignIn = () => {
   useEffect(() => {
     if (user && isAuthenticated) {
       toast.success("Login Successfull");
-      console.log("hello");
       navigate("/");
     }
   }, [user, isAuthenticated]);

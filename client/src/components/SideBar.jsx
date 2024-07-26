@@ -1,6 +1,6 @@
 import { Sidebar } from "flowbite-react";
 import { Link, useLocation } from "react-router-dom";
-import { HiUser, HiArrowNarrowRight } from "react-icons/hi";
+import { HiUser, HiArrowNarrowRight, HiDocumentText } from "react-icons/hi";
 import React, { useEffect, useState } from "react";
 import Signout from "./Signout";
 const SideBar = () => {
@@ -15,7 +15,7 @@ const SideBar = () => {
   return (
     <Sidebar className="w-full">
       <Sidebar.Items>
-        <Sidebar.ItemGroup>
+        <Sidebar.ItemGroup className="flex flex-col ">
           <Link to="/dashboard?tab=profile">
             <Sidebar.Item
               active={tab === "profile"}
@@ -24,6 +24,11 @@ const SideBar = () => {
               icon={HiUser}
             >
               Profile
+            </Sidebar.Item>
+          </Link>
+          <Link to="/dashboard?tab=posts">
+            <Sidebar.Item active={tab === "posts"} icon={HiDocumentText}>
+              Posts
             </Sidebar.Item>
           </Link>
 

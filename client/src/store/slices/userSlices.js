@@ -83,8 +83,10 @@ export const logout = createAsyncThunk("logout", async (data, thunkApi) => {
       withCredentials: true,
       credentials: true,
     });
+    console.log(res);
     return res.data.user;
   } catch (error) {
+    console.log(errorp);
     return thunkApi.rejectWithValue(error.response.data.message);
   }
 });

@@ -59,14 +59,14 @@ const userSchema = new mongoose.Schema(
     //     ref: "Post",
     //   },
     // ],
-    tokens: [
-      {
-        token: {
-          type: String,
-          required: true,
-        },
-      },
-    ],
+    // tokens: [
+    //   {
+    //     token: {
+    //       type: String,
+    //       required: true,
+    //     },
+    //   },
+    // ],
   },
 
   { timestamps: true }
@@ -108,8 +108,8 @@ userSchema.methods.generateJwtToken = async function () {
     { expiresIn: "9 days" }
   );
 
-  this.tokens = this.tokens.concat({ token });
-  await this.save();
+  // this.tokens = this.tokens.concat({ token });
+  // await this.save();
   return token;
 };
 
