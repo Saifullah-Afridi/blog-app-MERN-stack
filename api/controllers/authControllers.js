@@ -29,6 +29,7 @@ const SignUp = async (req, res, next) => {
 };
 
 const logIn = async function (req, res, next) {
+  console.log(req.body);
   try {
     const { userName, email, password } = req.body;
     if ((!userName && !email) || !password) {
@@ -43,14 +44,16 @@ const logIn = async function (req, res, next) {
     if (userName) {
       user = await User.findOne({ userName });
     }
+    console.log("1st");
     if (!user || !(await user.comparePassword(password, user.password))) {
       return next(new AppError("Please provide coorect Credientials", 400));
     }
+    console.log("2nd");
 
     // this save function of mongoose will run the validator again if you use it
     // and if the validation fails it will give an error
     const token = await user.generateJwtToken(user);
-
+    console.log("3rd");
     res
       .status(200)
       .cookie("access_token", token)
@@ -133,8 +136,16 @@ const logOutFromAllDevice = async (req, res, next) => {
   });
 };
 
-const me = (req, res, next) => {
-  res.send(req.user);
+const me = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    res.status(200).json({
+      status: "success",
+      user,
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
 };
 
 const uploadAvatar = (req, res, next) => {
@@ -242,4 +253,5 @@ module.exports = {
   deleteUser,
   googleAuth,
   updateMe,
+  isAdmin,
 };

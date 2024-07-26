@@ -8,6 +8,7 @@ const authRoutes = require("./routes/authRoutes");
 const AppError = require("./utils/AppError");
 const globalErrorHandler = require("./controllers/globalErrorHandler");
 const taskRoutes = require("./routes/taskRoutes");
+const postRoutes = require("./routes/postRoutes");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 dotenv.config();
@@ -53,6 +54,7 @@ app.use(cors(corsOption));
 app.use(cookieParser());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/task", taskRoutes);
+app.use("/api/v1/post", postRoutes);
 // middleware for unhandled routes
 app.all("*", (req, res, next) => {
   next(new AppError("Can not find " + req.originalUrl));

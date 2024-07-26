@@ -13,9 +13,11 @@ export const userLogin = createAsyncThunk(
           credentials: true,
         }
       );
+      console.log(response);
 
       return response.data.user;
     } catch (error) {
+      console.log(error);
       return thunkApi.rejectWithValue(error.response.data.message);
     }
   }

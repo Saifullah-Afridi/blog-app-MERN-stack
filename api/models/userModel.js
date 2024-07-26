@@ -53,6 +53,12 @@ const userSchema = new mongoose.Schema(
       type: String,
       default: "user",
     },
+    // posts: [
+    //   {
+    //     type: mongoose.Schema.Types.ObjectId,
+    //     ref: "Post",
+    //   },
+    // ],
     tokens: [
       {
         token: {
