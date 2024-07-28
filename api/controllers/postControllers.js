@@ -53,4 +53,47 @@ const getSinglePost = async (req, res, next) => {
     next(new AppError(error.message, 500));
   }
 };
-module.exports = { createPost, getSinglePost };
+
+const getAllPosts = async (req, res, next) => {
+  try {
+    const startIndex = parseInt(req.query.startIndex, 10) || 0;
+    const limit = parseInt(req.query.limit, 10) || 9;
+    const sortDirection = req.query.order === "asc" ? 1 : -1;
+    let queryObj;
+    if (req.query.category) {
+      queryObj.category = req.query.category;
+    }
+    if (req.query.slug) {
+      queryObj.slug = req.query.slug;
+    }
+    if (req.query.userId) queryObj.userId = req.query.userId;
+    if (req.query.postId) queryObj._id = req.query.postId;
+    if (req.query.searchTerm) {
+      query.$or = [
+        { title: { $regex: req.query.searchTerm, $options: "i" } },
+        { content: { $regex: req.query.searchTerm, $options: "i" } },
+      ];
+    }
+    const oneMonthAgo = new Date();
+    oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+    const lastMonthPosts = await Post.countDocuments({
+      createdAt: { $gte: oneMonthAgo },
+    });
+    const totalPosts = await Post.countDocuments();
+    const posts = await Post.find()
+      .sort({ updatedAt: sortDirection })
+      .skip(startIndex)
+      .limit(limit);
+    if (!posts) {
+      return next(new AppError("no post is found", 400));
+    }
+    res.status(200).json({
+      posts,
+      totalPosts,
+      lastMonthPosts,
+    });
+  } catch (error) {
+    next(error.message, 500);
+  }
+};
+module.exports = { createPost, getSinglePost, getAllPosts };
