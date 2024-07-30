@@ -80,20 +80,22 @@ const protectedRoute = async (req, res, next) => {
       return next(new AppError("The token is expired.Please Login again", 401));
     }
 
+    // const user = await User.findOne({
+    //   _id: payload._id,
+    //   "tokens.token": token,
+    // });
     const user = await User.findOne({
       _id: payload._id,
-      "tokens.token": token,
     });
-
-    if (token) {
-      const tokenInside = await User.findOne({ "tokens.token": token });
-      if (!tokenInside) {
-        return res.status(200).json({
-          status: "fail",
-          message: "The token does not exist please log in",
-        });
-      }
-    }
+    // if (token) {
+    //   const tokenInside = await User.findOne({ "tokens.token": token });
+    //   if (!tokenInside) {
+    //     return res.status(200).json({
+    //       status: "fail",
+    //       message: "The token does not exist please log in",
+    //     });
+    //   }
+    // }
 
     if (!user) {
       return next(
