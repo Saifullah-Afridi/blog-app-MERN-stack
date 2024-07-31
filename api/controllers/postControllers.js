@@ -56,36 +56,37 @@ const getSinglePost = async (req, res, next) => {
 
 const getAllPosts = async (req, res, next) => {
   try {
+    console.log(req.query);
     const startIndex = parseInt(req.query.startIndex, 10) || 0;
     const limit = parseInt(req.query.limit, 10) || 9;
     const sortDirection = req.query.order === "asc" ? 1 : -1;
-    // let queryObj;
-    // if (req.query.category) {
-    //   queryObj.category = req.query.category;
-    // }
-    // if (req.query.slug) {
-    //   queryObj.slug = req.query.slug;
-    // }
-    // if (req.query.userId) {
-    //   queryObj.user = req.query.userId;
-    // }
-    // if (req.query.postId) {
-    //   queryObj._id = req.query.postId;
-    // }
-    // if (req.query.searchTerm) {
-    //   query.$or = [
-    //     { title: { $regex: req.query.searchTerm, $options: "i" } },
-    //     { content: { $regex: req.query.searchTerm, $options: "i" } },
-    //   ];
-    // }
-    // console.log(queryObj, "+++++++++++++++");
+    let queryObj = {};
+    if (req.query.category) {
+      queryObj.category = req.query.category;
+    }
+    if (req.query.slug) {
+      queryObj.slug = req.query.slug;
+    }
+    if (req.query.userId) {
+      queryObj.user = req.query.userId;
+    }
+    if (req.query.postId) {
+      queryObj._id = req.query.postId;
+    }
+    if (req.query.searchTerm) {
+      query.$or = [
+        { title: { $regex: req.query.searchTerm, $options: "i" } },
+        { content: { $regex: req.query.searchTerm, $options: "i" } },
+      ];
+    }
     const oneMonthAgo = new Date();
     oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
     const lastMonthPosts = await Post.countDocuments({
       createdAt: { $gte: oneMonthAgo },
     });
+    console.log(queryObj);
     const totalPosts = await Post.countDocuments();
-    const posts = await Post.find({ user: req.query.userId })
+    const posts = await Post.find(queryObj)
       .sort({ updatedAt: sortDirection })
       .skip(startIndex)
       .limit(limit);
@@ -93,13 +94,28 @@ const getAllPosts = async (req, res, next) => {
       return next(new AppError("no post is found", 400));
     }
     res.status(200).json({
-      posts,
       totalPosts,
       lastMonthPosts,
+      posts,
     });
   } catch (error) {
     console.log(error);
     next(new AppError(error.message, 500));
   }
 };
-module.exports = { createPost, getSinglePost, getAllPosts };
+const deletePost = async (req, res, next) => {
+  try {
+    if (req.user.id !== req.params.userId) {
+      return next(new AppError("You can not delete this post", 400));
+    }
+    const post = await Post.findByIdAndDelete(req.params.postId);
+    res.status(200).json({
+      status: "success",
+      message: "post has been deleted",
+      post,
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+module.exports = { createPost, getSinglePost, getAllPosts, deletePost };

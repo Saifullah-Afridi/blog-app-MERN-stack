@@ -108,8 +108,6 @@ userSchema.methods.generateJwtToken = async function () {
     { expiresIn: "9 days" }
   );
 
-  // this.tokens = this.tokens.concat({ token });
-  // await this.save();
   return token;
 };
 
