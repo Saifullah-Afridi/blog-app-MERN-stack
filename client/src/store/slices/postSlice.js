@@ -40,20 +40,48 @@ export const deletePost = createAsyncThunk(
       console.log(res);
       return res.data.post;
     } catch (error) {
+      console.log(error);
+
       return thunkApi.rejectWithValue(error.response.data.message);
     }
   }
 );
 
+export const getSinglePost = createAsyncThunk(
+  "getSinglePost",
+  async (id, thunkApi) => {
+    try {
+      const res = await axios.get(`http://localhost:3000/api/v1/post/${id}`, {
+        withCredentials: true,
+        credentials: true,
+      });
+      // console.log(res);
+      return res.data.post;
+    } catch (error) {
+      console.log(error);
+
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 export const postSlice = createSlice({
   name: "post",
   initialState: {
     posts: [],
     loading: null,
-    error: null,
+    error: "",
     hasMore: true,
+    singlePost: null,
   },
-  reducers: {},
+  reducers: {
+    resetPosts: (state) => {
+      state.posts = [];
+      state.hasMore = true;
+    },
+    resetPost: (state) => {
+      state.singlePost = null;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(getAllPosts.pending, (state, action) => {
       state.loading = true;
@@ -65,7 +93,11 @@ export const postSlice = createSlice({
       if (action.payload.length < 9) {
         state.hasMore = false;
       }
-      state.posts = [...state.posts, ...action.payload];
+      if (action.meta.arg.startIndex === 0) {
+        state.posts = action.payload;
+      } else {
+        state.posts = [...state.posts, ...action.payload];
+      }
     });
     builder.addCase(getAllPosts.rejected, (state, action) => {
       state.loading = false;
@@ -76,7 +108,21 @@ export const postSlice = createSlice({
         (post) => post._id !== action.payload._id
       );
     });
+    builder.addCase(getSinglePost.pending, (state, action) => {
+      state.error = "";
+      state.loading = true;
+    });
+    builder.addCase(getSinglePost.fulfilled, (state, action) => {
+      state.loading = false;
+      state.singlePost = action.payload;
+    });
+    builder.addCase(getSinglePost.rejected, (state, action) => {
+      state.error = action.payload;
+      state.loading = false;
+      state.singlePost = null;
+    });
   },
 });
 
 export default postSlice.reducer;
+export const { resetPosts } = postSlice.actions;

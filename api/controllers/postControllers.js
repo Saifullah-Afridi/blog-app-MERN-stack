@@ -118,4 +118,36 @@ const deletePost = async (req, res, next) => {
     next(new AppError(error.message, 500));
   }
 };
-module.exports = { createPost, getSinglePost, getAllPosts, deletePost };
+const updatePost = async (req, res, next) => {
+  try {
+    if (req.user._id !== req.params.userId) {
+      return next(new AppError("You are not allowed to update this post", 400));
+    }
+    const updatedPost = await Post.findOneAndUpdate(
+      req.params.postId,
+      {
+        title: req.body.title,
+        content: req.body.content,
+        category: req.body.category,
+      },
+      {
+        runValidators: true,
+        new: true,
+      }
+    );
+    res.start(200).josn({
+      status: "success",
+      message: "Post has been updated",
+      updatedPost,
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+module.exports = {
+  createPost,
+  getSinglePost,
+  getAllPosts,
+  deletePost,
+  updatePost,
+};

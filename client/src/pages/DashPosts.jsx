@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { deletePost, getAllPosts } from "../store/slices/postSlice";
+import { deletePost, getAllPosts, resetPosts } from "../store/slices/postSlice";
 import { Button, Modal, Table } from "flowbite-react";
+import { Link } from "react-router-dom";
 
 const DashPosts = () => {
   const [startIndex, setStartIndex] = useState(0);
@@ -11,7 +12,18 @@ const DashPosts = () => {
   const { posts, loading, error, hasMore } = useSelector((state) => state.post);
   const dispatch = useDispatch();
   useEffect(() => {
-    dispatch(getAllPosts({ userId: user._id, startIndex: startIndex }));
+    const fetchData = async () => {
+      try {
+        await dispatch(resetPosts());
+        await dispatch(
+          getAllPosts({ userId: user._id, startIndex: startIndex })
+        );
+      } catch (error) {
+        console.error("Failed to fetch posts:", error);
+      }
+    };
+
+    fetchData();
   }, [user._id, startIndex, dispatch]);
   const handleClick = () => {
     setStartIndex(posts.length);
@@ -55,9 +67,12 @@ const DashPosts = () => {
                 >
                   Delete
                 </Table.Cell>
-                <Table.Cell className="text-green-400 cursor-pointer hover:underline">
-                  Edit
-                </Table.Cell>
+
+                <Link to={`/update-post/${post._id}`}>
+                  <Table.Cell className="text-green-400 cursor-pointer hover:underline">
+                    Edit
+                  </Table.Cell>
+                </Link>
               </Table.Row>
             ))}
           </Table.Body>

@@ -30,14 +30,12 @@ const CreatePost = () => {
             credentials: true,
           }
         );
-        console.log(res);
         if (res.status === 201) {
           setLoading(false);
           setError("");
           navigate(`${res.data.post.slug}`);
         }
       } catch (error) {
-        console.log(error);
         setLoading(false);
         setError(error.respose.data.message);
       }
