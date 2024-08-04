@@ -1,34 +1,36 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getAllUsers, resetAllUsers } from "../store/slices/userSlices";
+import {
+  deleteUser,
+  getAllUsers,
+  resetAllUsers,
+} from "../store/slices/userSlices";
 import { Alert, Button, Modal, Spinner, Table } from "flowbite-react";
 
 const DashUsers = () => {
-  const [startIndex, setStartIndex] = useState(0);
   const [openModal, setOpenModal] = useState(false);
   const [userId, setUserId] = useState("");
   const dispatch = useDispatch();
-  const { allUsers, allUsersLoading, allUsersError, hasMore } = useSelector(
-    (state) => state.user
-  );
+  const { allUsers, allUsersLoading, allUsersError, hasMore, startIndex } =
+    useSelector((state) => state.user);
   useEffect(() => {
-    const fetchUsers = async () => {
-      try {
-        await dispatch(resetAllUsers());
-        await dispatch(getAllUsers(startIndex));
-      } catch (error) {
-        console.log(error.message);
-      }
-    };
-    fetchUsers();
-  }, [startIndex]);
-  const handleClick = () => {
-    setStartIndex(allUsers.length);
+    dispatch(resetAllUsers());
+    dispatch(getAllUsers({ startIndex: 0 }));
+  }, [dispatch]);
+  const handleShowMore = () => {
+    if (hasMore) {
+      dispatch(getAllUsers({ startIndex: allUsers.length }));
+    }
+  };
+  const handleDelete = () => {
+    dispatch(deleteUser(userId));
   };
   return (
     <div>
       {allUsersError && <Alert />}
-      {allUsers && (
+      {allUsersLoading ? (
+        <Spinner />
+      ) : (
         <Table>
           <Table.Head
             className="bg-green-800 
@@ -63,15 +65,35 @@ const DashUsers = () => {
           </Table.Body>
         </Table>
       )}
-      {hasMore && (
-        <Button onClick={handleClick} className="mx-auto mt-6">
-          Show More
-        </Button>
+      {hasMore && <Button onClick={handleShowMore}>Show More</Button>}
+      {openModal && (
+        <Modal
+          popup
+          dismissible
+          show={openModal}
+          size="md"
+          onClose={() => setOpenModal(false)}
+        >
+          <Modal.Header />
+          <Modal.Body>
+            <h3 className="text-xl text-center">
+              Are You Sure,To delete this user
+            </h3>
+            <div className="flex mt-4 justify-center gap-3">
+              <Button onClick={handleDelete} className="px-5" color="failure">
+                Yes
+              </Button>
+              <Button
+                color="success"
+                className="px-5"
+                onClick={() => setOpenModal(false)}
+              >
+                No
+              </Button>
+            </div>
+          </Modal.Body>
+        </Modal>
       )}
-
-      <Modal show={openModal} onClose={() => setOpenModal(false)}>
-        <Modal.Header />
-      </Modal>
     </div>
   );
 };

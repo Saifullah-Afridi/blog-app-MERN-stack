@@ -3,7 +3,7 @@ const AppError = require("../utils/AppError");
 
 const getAllUser = async (req, res, next) => {
   const startIndex = parseInt(req.query.startIndex, 10) || 0;
-  const limit = parseInt(req.query.limit, 10) || 9;
+  const limit = 9;
   try {
     const users = await User.find().skip(startIndex).limit(limit);
     if (!users) {

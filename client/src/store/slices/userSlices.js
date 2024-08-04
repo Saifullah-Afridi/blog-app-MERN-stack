@@ -90,16 +90,17 @@ export const logout = createAsyncThunk("logout", async (data, thunkApi) => {
 
 export const getAllUsers = createAsyncThunk(
   "getAllUsers",
-  async (startIndex, thunkApi) => {
+  async ({ startIndex = 0 }, thunkApi) => {
     try {
       const res = await axios.get(
         `http://localhost:3000/api/v1/user?startIndex=${startIndex}`,
+
         {
           withCredentials: true,
           credentials: true,
         }
       );
-      console.log(res.data.users);
+      console.log(res.data.users.length);
 
       return res.data.users;
     } catch (error) {
@@ -115,13 +116,15 @@ export const userSlice = createSlice({
     loading: false,
     isAuthenticated: false,
     allUsers: [],
-    allUsersError: null,
     allUsersLoading: false,
+    allUsersError: null,
     hasMore: true,
+    startIndex: 0,
   },
   reducers: {
     resetAllUsers: (state) => {
       state.allUsers = [];
+      state.startIndex = 0;
       state.hasMore = true;
     },
   },
@@ -180,7 +183,6 @@ export const userSlice = createSlice({
     });
     builder.addCase(getAllUsers.fulfilled, (state, action) => {
       state.allUsersLoading = false;
-      state.allUsersError = null;
       if (action.payload.length < 9) {
         state.hasMore = false;
       }
@@ -189,6 +191,7 @@ export const userSlice = createSlice({
       } else {
         state.allUsers = [...state.allUsers, ...action.payload];
       }
+      state.startIndex += 9;
     });
     builder.addCase(getAllUsers.rejected, (state, action) => {
       state.allUsersLoading = false;
