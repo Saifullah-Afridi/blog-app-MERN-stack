@@ -64,6 +64,28 @@ export const getSinglePost = createAsyncThunk(
     }
   }
 );
+
+export const updatePost = createAsyncThunk(
+  "updatePost",
+  async ({ userId, postId, data }, thunkApi) => {
+    try {
+      const res = await axios.patch(
+        `http://localhost:3000/api/v1/post/${userId}/${postId}`,
+        data,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      return res.data.post;
+    } catch (error) {
+      console.log(error);
+
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
+
 export const postSlice = createSlice({
   name: "post",
   initialState: {
@@ -120,6 +142,11 @@ export const postSlice = createSlice({
       state.error = action.payload;
       state.loading = false;
       state.singlePost = null;
+    });
+    builder.addCase(updatePost.fulfilled, (state, action) => {
+      state.posts = state.posts.map((post) => {
+        return post._id === action.payload._id ? action.payload : post;
+      });
     });
   },
 });

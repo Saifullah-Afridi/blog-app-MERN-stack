@@ -35,6 +35,13 @@ const SideBar = () => {
               </Sidebar.Item>
             </Link>
           )}
+          {user.role === "admin" && (
+            <Link to="/dashboard?tab=users">
+              <Sidebar.Item active={tab === "users"} icon={HiDocumentText}>
+                Users
+              </Sidebar.Item>
+            </Link>
+          )}
           <Sidebar.Item icon={HiArrowNarrowRight} className="cursor-pointer">
             <Signout />
           </Sidebar.Item>

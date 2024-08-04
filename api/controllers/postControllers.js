@@ -120,25 +120,36 @@ const deletePost = async (req, res, next) => {
 };
 const updatePost = async (req, res, next) => {
   try {
-    if (req.user._id !== req.params.userId) {
+    if (String(req.user._id) !== req.params.userId) {
       return next(new AppError("You are not allowed to update this post", 400));
     }
-    const updatedPost = await Post.findOneAndUpdate(
+    const post = await Post.findByIdAndUpdate(
       req.params.postId,
       {
         title: req.body.title,
         content: req.body.content,
         category: req.body.category,
+        slug: req.body.title
+          .trim()
+          .split(" ")
+          .join("-")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-"),
       },
       {
         runValidators: true,
         new: true,
       }
     );
-    res.start(200).josn({
+    if (!post) {
+      return next(
+        new AppError("The post you want to update does not exist", 400)
+      );
+    }
+    res.status(200).json({
       status: "success",
       message: "Post has been updated",
-      updatedPost,
+      post,
     });
   } catch (error) {
     next(new AppError(error.message, 500));

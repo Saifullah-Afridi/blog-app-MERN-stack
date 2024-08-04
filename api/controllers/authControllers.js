@@ -243,6 +243,7 @@ const isAdmin = async (req, res, next) => {
     next(new AppError(error.message, 500));
   }
 };
+
 module.exports = {
   SignUp,
   logIn,

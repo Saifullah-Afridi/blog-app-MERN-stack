@@ -3,12 +3,12 @@ const app = express();
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const morgan = require("morgan");
-const userRoutes = require("./routes/userRoutes");
 const authRoutes = require("./routes/authRoutes");
 const AppError = require("./utils/AppError");
 const globalErrorHandler = require("./controllers/globalErrorHandler");
 const taskRoutes = require("./routes/taskRoutes");
 const postRoutes = require("./routes/postRoutes");
+const userRoutes = require("./routes/userRoutes");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 dotenv.config();
@@ -55,6 +55,7 @@ app.use(cookieParser());
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/task", taskRoutes);
 app.use("/api/v1/post", postRoutes);
+app.use("/api/v1/user", userRoutes);
 // middleware for unhandled routes
 app.all("*", (req, res, next) => {
   next(new AppError("Can not find " + req.originalUrl));

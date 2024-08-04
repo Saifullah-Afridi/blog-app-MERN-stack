@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getSinglePost } from "../store/slices/postSlice";
-import { useParams } from "react-router-dom";
+import { getSinglePost, updatePost } from "../store/slices/postSlice";
+import { useNavigate, useParams } from "react-router-dom";
 import { Alert, Button, Select, Spinner, TextInput } from "flowbite-react";
 import ReactQuill from "react-quill";
 
@@ -9,6 +9,7 @@ const UpdatePost = () => {
   const [title, setTitle] = useState();
   const [content, setContent] = useState();
   const [category, setCategory] = useState();
+  const navigate = useNavigate();
 
   const { id } = useParams();
   const { user } = useSelector((state) => state.user);
@@ -18,13 +19,10 @@ const UpdatePost = () => {
     const fetchPost = async () => {
       try {
         await dispatch(getSinglePost(id)).unwrap();
-      } catch (err) {
-        console.log(err);
-      }
+      } catch (err) {}
     };
     fetchPost();
   }, [dispatch, id]);
-  console.log(singlePost);
 
   useEffect(() => {
     if (singlePost) {
@@ -33,7 +31,16 @@ const UpdatePost = () => {
       setCategory(singlePost.category);
     }
   }, [singlePost]);
-  const handleSubmit = () => {};
+  const handleUpdate = (e) => {
+    e.preventDefault();
+    const data = {
+      title: title,
+      content: content,
+      category: category,
+    };
+
+    dispatch(updatePost({ userId: user._id, postId: id, data }));
+  };
   return (
     <div className=" min-h-screen w-[70%] mx-auto">
       <h1 className="text-3xl text-center py-7">Update Post</h1>
@@ -42,7 +49,7 @@ const UpdatePost = () => {
       ) : (
         <div className="h-full">
           <form
-            onSubmit={handleSubmit}
+            onSubmit={handleUpdate}
             className="h-full flex flex-col gap-4 overflow-hidden"
           >
             <TextInput
@@ -55,9 +62,9 @@ const UpdatePost = () => {
               onChange={(e) => setCategory(e.target.value)}
             >
               <option value="uncategorzied">Uncategorized</option>
-              <option value="reactjs">React Js</option>
-              <option value="nextjs">Next Js</option>
-              <option value="nodejs">Node Js</option>
+              <option value="ReactJs">React Js</option>
+              <option value="NextJs">Next Js</option>
+              <option value="NodeJs">Node Js</option>
             </Select>
             <ReactQuill
               className="h-52 mb-5"

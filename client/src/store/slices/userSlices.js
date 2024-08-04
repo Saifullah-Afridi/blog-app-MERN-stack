@@ -13,7 +13,6 @@ export const userLogin = createAsyncThunk(
           credentials: true,
         }
       );
-      console.log(response);
 
       return response.data.user;
     } catch (error) {
@@ -69,7 +68,6 @@ export const deleteUser = createAsyncThunk(
           credentials: true,
         }
       );
-      console.log(res);
       return res.data.message;
     } catch (error) {
       console.log(error.response.data.message);
@@ -86,10 +84,29 @@ export const logout = createAsyncThunk("logout", async (data, thunkApi) => {
     console.log(res);
     return res.data.user;
   } catch (error) {
-    console.log(errorp);
     return thunkApi.rejectWithValue(error.response.data.message);
   }
 });
+
+export const getAllUsers = createAsyncThunk(
+  "getAllUsers",
+  async (startIndex, thunkApi) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/v1/user?startIndex=${startIndex}`,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      console.log(res.data.users);
+
+      return res.data.users;
+    } catch (error) {
+      thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 export const userSlice = createSlice({
   name: "user",
   initialState: {
@@ -97,8 +114,17 @@ export const userSlice = createSlice({
     error: null,
     loading: false,
     isAuthenticated: false,
+    allUsers: [],
+    allUsersError: null,
+    allUsersLoading: false,
+    hasMore: true,
   },
-  reducers: {},
+  reducers: {
+    resetAllUsers: (state) => {
+      state.allUsers = [];
+      state.hasMore = true;
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(userLogin.pending, (state) => {
       state.loading = true;
@@ -148,7 +174,28 @@ export const userSlice = createSlice({
       state.isAuthenticated = false;
       state.error = null;
     });
+    builder.addCase(getAllUsers.pending, (state, action) => {
+      state.allUsersLoading = true;
+      state.allUsersError = null;
+    });
+    builder.addCase(getAllUsers.fulfilled, (state, action) => {
+      state.allUsersLoading = false;
+      state.allUsersError = null;
+      if (action.payload.length < 9) {
+        state.hasMore = false;
+      }
+      if (action.meta.arg.startIndex === 0) {
+        state.allUsers = action.payload;
+      } else {
+        state.allUsers = [...state.allUsers, ...action.payload];
+      }
+    });
+    builder.addCase(getAllUsers.rejected, (state, action) => {
+      state.allUsersLoading = false;
+      state.allUsersError = action.payload;
+    });
   },
 });
+export const { resetAllUsers } = userSlice.actions;
 
 export default userSlice.reducer;
