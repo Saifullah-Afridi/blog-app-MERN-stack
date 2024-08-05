@@ -75,6 +75,27 @@ export const deleteUser = createAsyncThunk(
     }
   }
 );
+export const deleteByAdmin = createAsyncThunk(
+  "deleteByAdmin",
+  async (id, thunkApi) => {
+    try {
+      const res = await axios.delete(
+        `http://localhost:3000/api/v1/user/delete-by-admin/${id}`,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      console.log(res);
+
+      return res.data.deletedUser;
+    } catch (error) {
+      console.log(error);
+
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 export const logout = createAsyncThunk("logout", async (data, thunkApi) => {
   try {
     const res = await axios.get("http://localhost:3000/api/v1/auth/log-out", {
@@ -183,7 +204,7 @@ export const userSlice = createSlice({
     });
     builder.addCase(getAllUsers.fulfilled, (state, action) => {
       state.allUsersLoading = false;
-      if (action.payload.length < 9) {
+      if (action.payload?.length < 9) {
         state.hasMore = false;
       }
       if (action.meta.arg.startIndex === 0) {
@@ -196,6 +217,11 @@ export const userSlice = createSlice({
     builder.addCase(getAllUsers.rejected, (state, action) => {
       state.allUsersLoading = false;
       state.allUsersError = action.payload;
+    });
+    builder.addCase(deleteByAdmin.fulfilled, (state, action) => {
+      state.allUsers = state.allUsers.filter(
+        (user) => String(user._id) !== String(action.payload._id)
+      );
     });
   },
 });

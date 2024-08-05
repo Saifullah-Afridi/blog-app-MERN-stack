@@ -15,4 +15,22 @@ const getAllUser = async (req, res, next) => {
   }
 };
 
-module.exports = { getAllUser };
+const deleteByAmin = async (req, res, next) => {
+  try {
+    const id = req.params.id;
+    const user = await User.findById(req.params.id);
+    if (user.role === "admin") {
+      return next(new AppError("you can not delete admin", 500));
+    }
+    const deletedUser = await User.findOneAndDelete({ _id: id });
+    res.status(200).json({
+      status: "success",
+      message: "User has been deleted",
+      deletedUser,
+    });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+
+module.exports = { getAllUser, deleteByAmin };

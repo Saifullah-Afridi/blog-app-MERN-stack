@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
+  deleteByAdmin,
   deleteUser,
   getAllUsers,
   resetAllUsers,
@@ -23,7 +24,8 @@ const DashUsers = () => {
     }
   };
   const handleDelete = () => {
-    dispatch(deleteUser(userId));
+    dispatch(deleteByAdmin(userId));
+    setOpenModal(false);
   };
   return (
     <div>
@@ -43,7 +45,7 @@ const DashUsers = () => {
             <Table.HeadCell>Delete</Table.HeadCell>
           </Table.Head>
           <Table.Body>
-            {allUsers.map((user) => (
+            {allUsers?.map((user) => (
               <Table.Row key={user._id}>
                 <Table.Cell>{user.created_at}</Table.Cell>
                 <Table.Cell>{user.userName}</Table.Cell>
