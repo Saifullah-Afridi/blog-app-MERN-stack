@@ -8,6 +8,7 @@ import {
   getSinglePost,
 } from "../store/slices/postSlice";
 import CallAction from "../components/CallAction";
+import CommentsSection from "../components/CommentsSection";
 
 const Post = () => {
   const { postSlug } = useParams();
@@ -40,6 +41,7 @@ const Post = () => {
           <div className=" w-[70%] mx-auto">
             <CallAction />
           </div>
+          <CommentsSection />
         </div>
       )}
     </div>

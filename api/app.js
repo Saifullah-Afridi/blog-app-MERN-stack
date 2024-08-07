@@ -9,6 +9,7 @@ const globalErrorHandler = require("./controllers/globalErrorHandler");
 const taskRoutes = require("./routes/taskRoutes");
 const postRoutes = require("./routes/postRoutes");
 const userRoutes = require("./routes/userRoutes");
+const commentRoutes = require("./routes/commentRoutes");
 const cors = require("cors");
 const cookieParser = require("cookie-parser");
 dotenv.config();
@@ -56,6 +57,7 @@ app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/task", taskRoutes);
 app.use("/api/v1/post", postRoutes);
 app.use("/api/v1/user", userRoutes);
+app.use("/api/v1/comment", commentRoutes);
 // middleware for unhandled routes
 app.all("*", (req, res, next) => {
   next(new AppError("Can not find " + req.originalUrl));
