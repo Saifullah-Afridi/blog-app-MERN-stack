@@ -9,10 +9,12 @@ import postReducer from "./slices/postSlice";
 import storage from "redux-persist/lib/storage";
 import { persistReducer } from "redux-persist";
 import persistStore from "redux-persist/es/persistStore";
+import commentReducer from "./slices/commentSlice";
 const rootReducers = combineReducers({
   user: userReducer,
   theme: themeReducer,
   post: postReducer,
+  comment: commentReducer,
 });
 const persistConfig = {
   key: "root",
