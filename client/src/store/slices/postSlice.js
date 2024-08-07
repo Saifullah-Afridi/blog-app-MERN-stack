@@ -5,13 +5,16 @@ export const getAllPosts = createAsyncThunk(
   "getAllPosts",
   async (options = {}, thunkApi) => {
     try {
-      const { userId, startIndex } = options;
+      const { userId, startIndex, slug } = options;
       const queryParams = new URLSearchParams();
       if (userId !== undefined && userId !== null) {
         queryParams.append("userId", userId);
       }
       if (startIndex !== undefined && startIndex !== null) {
         queryParams.append("startIndex", startIndex);
+      }
+      if (slug !== undefined && slug !== null) {
+        queryParams.append("slug", slug);
       }
       const queryString = queryParams.toString();
       const url = `http://localhost:3000/api/v1/post${
@@ -46,7 +49,25 @@ export const deletePost = createAsyncThunk(
     }
   }
 );
+export const getPostBySlug = createAsyncThunk(
+  "getPostBySlug",
+  async (postSlug, thunkApi) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/v1/post/slug/${postSlug}`,
+        {
+          withCredentials: true,
+          credentials: true,
+        }
+      );
+      console.log(res);
 
+      return res.data.post;
+    } catch (error) {
+      return thunkApi.rejectWithValue(error.response.data.message);
+    }
+  }
+);
 export const getSinglePost = createAsyncThunk(
   "getSinglePost",
   async (id, thunkApi) => {
@@ -93,7 +114,9 @@ export const postSlice = createSlice({
     loading: null,
     error: "",
     hasMore: true,
-    singlePost: null,
+    singlePost: {},
+    singlePostLoading: true,
+    singlePostError: false,
   },
   reducers: {
     resetPosts: (state) => {
@@ -147,6 +170,18 @@ export const postSlice = createSlice({
       state.posts = state.posts.map((post) => {
         return post._id === action.payload._id ? action.payload : post;
       });
+    });
+    builder.addCase(getPostBySlug.pending, (state, action) => {
+      state.singlePostLoading = true;
+      state.singlePostError = "";
+    });
+    builder.addCase(getPostBySlug.fulfilled, (state, action) => {
+      state.singlePost = action.payload;
+      state.singlePostLoading = false;
+    });
+    builder.addCase(getPostBySlug.rejected, (state, action) => {
+      state.singlePost = {};
+      state.singlePostError = action.payload;
     });
   },
 });

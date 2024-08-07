@@ -155,10 +155,24 @@ const updatePost = async (req, res, next) => {
     next(new AppError(error.message, 500));
   }
 };
+const getPostBySlug = async (req, res, next) => {
+  try {
+    const { slug } = req.params;
+    const post = await Post.findOne({ slug });
+    if (!post) {
+      return next(new AppError("Post not found", 404));
+    }
+    res.status(200).json({
+      status: "success",
+      post,
+    });
+  } catch (error) {}
+};
 module.exports = {
   createPost,
   getSinglePost,
   getAllPosts,
   deletePost,
   updatePost,
+  getPostBySlug,
 };
