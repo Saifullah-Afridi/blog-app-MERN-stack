@@ -7,6 +7,7 @@ import {
   getPostBySlug,
   getSinglePost,
 } from "../store/slices/postSlice";
+import CallAction from "../components/CallAction";
 
 const Post = () => {
   const { postSlug } = useParams();
@@ -32,7 +33,13 @@ const Post = () => {
           <Button className="text-xs self-center" pill color="gray">
             {singlePost.category}
           </Button>
-          <div className=" w-[50%] mx-auto">{singlePost.content}</div>
+          <div
+            className=" w-[50%] mx-auto"
+            dangerouslySetInnerHTML={{ __html: singlePost.content }}
+          ></div>
+          <div className=" w-[70%] mx-auto">
+            <CallAction />
+          </div>
         </div>
       )}
     </div>
