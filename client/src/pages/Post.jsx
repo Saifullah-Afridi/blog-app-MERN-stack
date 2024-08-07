@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
+import { Alert, Button, Spinner } from "flowbite-react";
 import {
   getAllPosts,
   getPostBySlug,
@@ -18,10 +19,21 @@ const Post = () => {
   }, [dispatch, postSlug]);
   return (
     <div className="min-h-screen">
+      {singlePostError && <Alert />}
       {singlePostLoading ? (
-        <div>loading.....</div>
+        <div className="flex justify-center items-center  min-h-screen">
+          <Spinner size="xl" />
+        </div>
       ) : (
-        <div>{singlePost?.slug}</div>
+        <div className="flex flex-col gap-7">
+          <h2 className="text-2xl w-[70%] p-5 mx-auto mt-10 text-center">
+            {singlePost.title}
+          </h2>
+          <Button className="text-xs self-center" pill color="gray">
+            {singlePost.category}
+          </Button>
+          <div className=" w-[50%] mx-auto">{singlePost.content}</div>
+        </div>
       )}
     </div>
   );
