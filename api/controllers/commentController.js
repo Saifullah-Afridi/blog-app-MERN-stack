@@ -15,7 +15,9 @@ const getPostCommment = async (req, res, next) => {
     console.log(req.query.postId);
 
     const { postId } = req.query;
-    const comments = await Comment.find({ post: postId });
+    const comments = await Comment.find({ post: postId })
+      .sort({ createdAt: -1 })
+      .populate("user");
     if (!comments) {
       return next(new AppError("No comment is found", 400));
     }

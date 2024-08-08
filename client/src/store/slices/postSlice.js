@@ -60,7 +60,6 @@ export const getPostBySlug = createAsyncThunk(
           credentials: true,
         }
       );
-      console.log(res);
 
       return res.data.post;
     } catch (error) {
