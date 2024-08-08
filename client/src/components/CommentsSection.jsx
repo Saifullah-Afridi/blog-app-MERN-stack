@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import { Button, Textarea } from "flowbite-react";
 import React, { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -61,12 +60,6 @@ const CommentsSection = () => {
       </div>
     </div>
   );
-=======
-import React from "react";
-
-const CommentsSection = () => {
-  return <div className="w-[70%] mx-auto mb-12">CommentsSection</div>;
->>>>>>> c20b842a6a13ffbc36df6f5f4f2dbdd72ebf5511
 };
 
 export default CommentsSection;

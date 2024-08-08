@@ -10,4 +10,20 @@ const createComment = async (req, res, next) => {
   }
 };
 
-module.exports = { createComment };
+const getPostCommment = async (req, res, next) => {
+  try {
+    console.log(req.query.postId);
+
+    const { postId } = req.query;
+    const comments = await Comment.find({ post: postId });
+    if (!comments) {
+      return next(new AppError("No comment is found", 400));
+    }
+    res
+      .status(200)
+      .json({ status: "success", numberOfComment: comments.length, comments });
+  } catch (error) {
+    next(new AppError(error.message, 500));
+  }
+};
+module.exports = { createComment, getPostCommment };
